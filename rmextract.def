@@ -3,19 +3,20 @@ MirrorURL: http://archive.ubuntu.com/ubuntu/
 OSVersion: jammy
 
 %labels
-        APPLICATION_NAME Ubuntu LTS + <software>
+        APPLICATION_NAME Ubuntu LTS + RMextract
         OS_VERSION 22.04
-        APPLICATION_URL <software_url>
+        APPLICATION_URL https://pypi.org/project/RMextract/
 
         SYSTEM_NAME ilifu
-        SYSTEM_SINGULARITY_VERSION <Singularity_version>
+        SYSTEM_SINGULARITY_VERSION 3.9
         SYSTEM_URL http://www.ilifu.ac.za
 
         AUTHOR_NAME IDIA
         AUTHOR_EMAIL support@ilifu.ac.za
 
 %help
-        <Insert information about contents of container and how to run applications if necessary.>     
+        RMextract is Python software to extract TEC, vTEC, Earthmagnetic field and Rotation Measures (RM) 
+        from GPS and WMM data for radio interferometry observations.
 
 %environment
      
@@ -33,10 +34,17 @@ OSVersion: jammy
         apt-get install -y software-properties-common
         add-apt-repository -y universe
         apt-get update -y
-        apt-get install -y wget vim apt-utils git build-essential bzip2 curl pkg-config python-is-python3 python3-pip
+        apt-get install -y wget vim apt-utils git build-essential bzip2 curl pkg-config python-is-python3 python3-pip gfortran
 
-        # Install <add software here>
+        # Install python packages 
+        python -m pip install numpy scipy astropy 
 
+        # Install RMextract
+        cd /opt
+        git clone https://github.com/lofar-astron/RMextract.git
+        cd RMextract
+        python setup.py build
+        python setup.py install
 
         # Install IPykernel for Jupyter
         python -m pip install ipykernel
