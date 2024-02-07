@@ -1,0 +1,53 @@
+Bootstrap: debootstrap
+MirrorURL: http://archive.ubuntu.com/ubuntu/
+OSVersion: jammy
+
+%labels
+        APPLICATION_NAME Ubuntu LTS + <software>
+        OS_VERSION 22.04
+        APPLICATION_URL <software_url>
+
+        SYSTEM_NAME ilifu
+        SYSTEM_SINGULARITY_VERSION <Singularity_version>
+        SYSTEM_URL http://www.ilifu.ac.za
+
+        AUTHOR_NAME IDIA
+        AUTHOR_EMAIL support@ilifu.ac.za
+
+%help
+        <Insert information about contents of container and how to run applications if necessary.>     
+
+%environment
+     
+        export LC_ALL=C
+
+%post
+
+        # Create Installation Directories and export paths. This is needed as part of post.
+        # %environment scriptlet does not define these paths during %post, only after.
+        mkdir -p /opt
+        export DEBIAN_FRONTEND=noninteractive
+
+        # Installation of initial packages
+        apt-get update -y && apt-get dist-upgrade -y
+        apt-get install -y software-properties-common
+        add-apt-repository -y universe
+        apt-get update -y
+        apt-get install -y wget vim apt-utils git build-essential bzip2 curl pkg-config python-is-python3 python3-pip
+
+        # Install <add software here>
+
+
+        # Install IPykernel for Jupyter
+        python -m pip install ipykernel
+
+        # Fix command prompt in Singularity 3.5.2
+        printf 'export PS1="\u@$SINGULARITY_NAME:\w$ "' > /.singularity.d/env/999-psvars.sh
+
+        # Cleanup the container
+        apt-get clean
+        apt-get autoclean
+
+%runscript
+
+	python "$@"  
